@@ -15,7 +15,7 @@ if(flag) {
 	if(address.startsWith('0x')){
 		address = address.slice(2)
 	}
-	var chainID = 16888;
+	var chainID = 1007;
 	var PREFIX = 'NEW';
 	var data = chainID.toString(16).slice(-8)+address;
 	var newAddress = PREFIX + base58check.encode(data)
