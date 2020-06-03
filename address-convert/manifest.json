@@ -1,0 +1,9 @@
+{
+	"name": "NEW Address Convert",
+	"manifest_version": 1,
+	"description": "NEW Address convert",
+	"browser_action": {
+		"default_icon": "newton_logo.png"
+	},
+	"permissions": ["https://api.com"]
+}

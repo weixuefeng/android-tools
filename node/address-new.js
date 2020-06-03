@@ -1,25 +1,47 @@
 #!/usr/bin/env node
 
 var program = require('commander');
+var base58check = require('base58check');
 
 program.parse(process.argv);
+console.log(program.args)
 var address = program.args[0];
+var chainId = program.args[1];
 
-var flag = address.startsWith('NEW')
+var isNewAddress = address.startsWith('NEW');
 
-var base58check = require('base58check');
-if(flag) {
-	var ethAddress = base58check.decode(address.slice(3), 'hex').data.slice(4)
-	console.log('eth address is:0x', ethAddress)
+if(isNewAddress) {
+	// convert new to hex address
+	var ethAddress = newAddress2HexAddress(address);
+	console.log('hex address is:', ethAddress);
 } else {
-	if(address.startsWith('0x')){
-		address = address.slice(2)
+	// convert hex address to new address
+	console.log(chainId)
+	if(chainId == undefined || chainId == "") {
+		console.log("not found chain id, default 1002");
+		chainId = "1002";
 	}
-	var chainID = 1007;
-	var PREFIX = 'NEW';
-	var data = chainID.toString(16).slice(-8)+address;
-	var newAddress = PREFIX + base58check.encode(data)
-	console.log('new address is', newAddress)
+	chainId = parseInt(chainId);
+	var newAddress = hexAddress2NewAddress(address, chainId);
+	console.log('new address is', newAddress);
 }
 
+function hexAddress2NewAddress(hexAddress, chainId) {
+    if(hexAddress.startsWith("0x")) {
+        hexAddress = hexAddress.slice(2);
+    }
+    var PREFIX = "NEW";
+    var data = chainId.toString(16).slice(-8) + hexAddress;
+    if(data.length % 2 != 0) {
+        data = "0" + data;
+    }
+    return PREFIX + base58check.encode(data);
+}
 
+function newAddress2HexAddress(newAddress) {
+    if(typeof(newAddress) == "string" && newAddress.startsWith("NEW")) {
+        return "0x" + base58check.decode(newAddress.slice(3), "hex").data.slice(4);
+    } else {
+        return newAddress;
+    }
+}
